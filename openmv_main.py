@@ -197,9 +197,7 @@ def motion_detection():
         difference_image = current_image.difference(previous_image)
         stats = difference_image.statistics()
 
-        '''
-        由于不支持多线程,只能在基础状态---运动检测中获取时间和发送日志
-        '''
+       
         process_uart()     #获取时间
         check_time_and_send_log()     #检查时间和发送日志
 
@@ -267,8 +265,8 @@ def specific_face_recognition():
 
     global current_time
     print(f"这是特定人脸识别前的时间{current_time}")
-    xyjq_count = 0
-    zjq_count = 0
+    std1_count = 0
+    std2_count = 0
     face_num = 0
     detection_count = 0
 
@@ -304,28 +302,28 @@ def specific_face_recognition():
                 continue  # 该类没有检测到对象
 
             if labels[i] == '1':
-                xyjq_count += 1
-                zjq_count = 0
+                std1_count += 1
+                std2_count = 0
                 face_num += 1
-                if xyjq_count >= 40:
-                    print("向阳佳琪")
+                if std1_count >= 40:
+                    print("同学一")
                     
                     data = bytearray([0x76, 0x61, 0x32, 0x2E, 0x76, 0x61, 0x6C, 0x3D, 0x31, 0xFF, 0xFF, 0xFF])
                     uart1.write(data)
                     
-                    log_data["specific_face_times"].append(f"{'Xiangyang Jiaqi'} at {current_time[3]} {current_time[4]}" + "\n")
+                    log_data["specific_face_times"].append(f"{'STD 1'} at {current_time[3]} {current_time[4]}" + "\n")
                     return
             elif labels[i] == '2':
-                xyjq_count = 0
-                zjq_count += 1
+                std1_count = 0
+                std2_count += 1
                 face_num += 1
-                if zjq_count >= 10:
-                    print("赵佳琦")
-                    print(f"这是赵佳琦前的时间{current_time}")
+                if std2_count >= 10:
+                    print("同学二")
+                    print(f"这是检测前的时间{current_time}")
                     data = bytearray([0x76, 0x61, 0x32, 0x2E, 0x76, 0x61, 0x6C, 0x3D, 0x32, 0xFF, 0xFF, 0xFF])
                     uart1.write(data)
                     
-                    log_data["specific_face_times"].append(f"{"Zhao Jiaqi"} at {current_time[3]} {current_time[4]}"+ "\n")
+                    log_data["specific_face_times"].append(f"{"STD 2"} at {current_time[3]} {current_time[4]}"+ "\n")
                     return
             elif detection_count >= 200:
                 print("陌生人")
@@ -337,7 +335,7 @@ def specific_face_recognition():
 
                 return
         
-            print(xyjq_count, zjq_count, face_num, detection_count)
+            print(std1_count, std2_count, face_num, detection_count)
         check_time_and_send_log()     #检查时间和发送日志
         
 
